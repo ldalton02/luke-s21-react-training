@@ -1,24 +1,36 @@
-import { useState } from "react";
-
 function Food(props) {
+
+    const newAddLikes = () => {
+        var likeCopy = [...props.likeCount];
+        likeCopy[props.currIndex] = likeCopy[props.currIndex] + 1;
+        props.setLikeCount(likeCopy);
+    }
+
     const removeFood = () => {
-        const foodCopy = [...props.foodList.splice(0, props.index), ...props.foodList.splice(props.index + 1)];
-        const likeCopy = [...props.likes.splice(0, props.index), ...props.likes.splice(props.index + 1)];
+        const foodCopy = [...props.foodList.splice(0, props.currIndex), ...props.foodList.splice(props.currIndex + 1)];
+        if (props.currIndex === foodCopy.length) {
+            props.setCurrIndex(0);
+        }
         props.setFoodList(foodCopy);
-        props.setLikes(likeCopy);
+
+        const likeCopy = [...props.likeCount.splice(0, props.currIndex), ...props.likeCount.splice(props.currIndex + 1)];
+        props.setLikeCount(likeCopy);
     }
 
-    const addLikes = () => {
-        var obj = {...props.likes};
-        obj[props.index] = 'a';
-        props.setLikes({obj});
+    const nextFood = () => {
+        props.setCurrIndex((props.currIndex + 1) % props.foodList.length);
     }
 
-    return <div>
-        <h3>{props.name}</h3>
-        <h4 id="likeCount"> Likes: {props.likes[props.index]} </h4>
-        <button onClick={addLikes}>Like Me</button>
-        <button onClick={removeFood}>Remove Me</button>
+    return <div className="food-container">
+        <h3 className="food-item">{props.name}</h3>
+        <h4 id="likeCount" className="food-item"> Likes: {props.likeCount[props.currIndex]} </h4>
+        
+        <div>
+            <button className="my-button food-button" onClick={newAddLikes}>Like Me</button>
+            { props.isSingleView && <button className="my-button food-button" onClick={nextFood}> Pass Me </button> }
+        </div>
+
+        <button className="my-button food-button" onClick={removeFood}>Remove Me</button>
     </div>
 }
 export default Food;

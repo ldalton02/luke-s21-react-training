@@ -1,18 +1,12 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import { useState } from 'react';
 import Food from './Food';
 
 
-
-
-
-
-
-
 function App() {
   const [foodList, setFoodList] = useState([]);
+  const [likeCount, setLikeCount] = useState([]);
   const [inputFood, setInputFood] = useState("");
 
   const [isSingleView, setIsSingleView] = useState(false);
@@ -20,67 +14,71 @@ function App() {
 
   const addFood = () => {
     setFoodList([...foodList, inputFood]);
-    setLikes([...likes, 0]);
     setInputFood("");
+    setLikeCount([...likeCount, 0]);
   }
 
   const switchInput = () => {
     setIsSingleView(!isSingleView);
   }
 
-  const nextFood = () => {
-    if (currIndex < foodList.length - 1) {
-      setCurrIndex(currIndex + 1);
-    } else {
-      setCurrIndex(0);
-    }
-  }
-
-
-  const [likes, setLikes] = useState([]);
   // true = single view?
   return (
     <div className="App">
       <header className="App-header">
         <div>
           {
-            <button onClick={switchInput}> {
+            <button className="float-switch-button my-button" onClick={switchInput}> {
               isSingleView ? "View List" : "View Single"
             } </button>
           }
-          <h2> Add a New Food</h2>
-          <input type="text" onChange={(event) => { setInputFood(event.target.value) }} value={inputFood} />
-          <div>
-            <button onClick={addFood}>  Submit </button>
-          </div>
-        </div>
-        <div>
-          {isSingleView && (
+          <div className="grid-container">
             <div>
-              <Food
-                name={foodList[currIndex]}
-                index={currIndex}
-                foodList={foodList}
-                setFoodList={setFoodList}
-              >
-              </Food>
-              <button onClick={nextFood}> Pass Me </button>
+              <h2 id="main-title"> Add a New Food</h2>
+              <input className="input-field" type="text" onChange={(event) => { setInputFood(event.target.value) }} value={inputFood} />
+              <div>
+                <button className="my-button" onClick={addFood}>  Submit </button>
+              </div>
             </div>
-          )
-          }
-          {!isSingleView &&
-            foodList.map((value, index) => {
-              return <Food
-                name={value}
-                index={index}
-                foodList={foodList}
-                setFoodList={setFoodList}
-                likes={likes}
-                setLikes={setLikes}
-              >
-              </Food>
-            })
-          }
+
+            <div>
+              { foodList.length <= 0 &&
+                <h4 className="text-colorset"> Please enter a food! </h4>
+              }
+              {isSingleView && foodList.length > 0 &&  (
+                <div className="food-item">
+                  <Food
+                    name={foodList[currIndex]}
+                    currIndex={currIndex}
+                    foodList={foodList}
+                    setFoodList={setFoodList}
+                    likeCount={likeCount}
+                    setLikeCount={setLikeCount}
+                    setCurrIndex={setCurrIndex}
+                    isSingleView={isSingleView}
+                  >
+                  </Food>
+                </div>
+              )
+              }
+              {!isSingleView && foodList.length > 0 && 
+                foodList.map((value, index) => {
+                  return  <div key={value} className="food-item"> <Food
+                    name={value}
+                    currIndex={index}
+                    foodList={foodList}
+                    setFoodList={setFoodList}
+                    likeCount={likeCount}
+                    setLikeCount={setLikeCount}
+                    setCurrIndex={setCurrIndex}
+                    isSingleView={isSingleView}
+                  >
+                  </Food>
+                  </div>
+                })
+              }
+            </div>
+          </div>
         </div>
       </header>
     </div>
